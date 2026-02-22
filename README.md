@@ -1,21 +1,21 @@
 # AESend
 
-Zero-knowledge encrypted sharing. Send anything to anyone — the server never sees what you send.
+Zero-knowledge encrypted sharing. The server never sees what you send.
 
-AESend encrypts your data in the browser using AES before it ever leaves your device. The backend stores nothing but opaque ciphertext. No accounts, no tracking, no metadata. Just a link and a secret only you and your recipient know.
+Data is encrypted client-side with AES-256-GCM before it leaves the browser. The backend stores opaque ciphertext and nothing else. The key lives in the URL fragment, which browsers [never send to the server](https://www.rfc-editor.org/rfc/rfc3986#section-3.5).
 
 ## How it works
 
-1. You drop in a file or message on the frontend
-2. AESend encrypts it client-side with AES — the plaintext never leaves your browser
-3. The ciphertext is sent to the backend, which stores the blob and hands back a unique URL-safe ID
-4. Share the link. The recipient opens it, decrypts in their browser. Done.
+1. Enter a message on the frontend
+2. Browser encrypts it with AES-256-GCM — plaintext never leaves your device
+3. Ciphertext is sent to the backend, which stores the blob and returns a unique ID
+4. Share the link. Recipient opens it, decrypts in their browser
 
-The server is intentionally blind. It stores encrypted bytes and nothing else. Even if the database leaked, the contents are meaningless without the key — which never touches the network.
+The server is intentionally blind. Even if the database leaked, the contents are meaningless without the key.
 
 ## API
 
-All endpoints are under `/blobs`. Data is sent/received as base64-encoded bytes.
+All endpoints under `/blobs`. Data is base64-encoded bytes.
 
 | Method | Endpoint | Body | Response | Status |
 |--------|----------|------|----------|--------|
@@ -24,13 +24,7 @@ All endpoints are under `/blobs`. Data is sent/received as base64-encoded bytes.
 | `GET` | `/blobs` | — | `{"blobs": ["id1", "id2", ...]}` | `200` |
 | `DELETE` | `/blobs/{blob_id}` | — | — | `204` |
 
-### Errors
-
-All errors return `{"detail": "message"}`:
-
-- `404` — Blob not found (GET or DELETE with bad id)
-- `422` — Invalid request body (bad JSON, missing fields)
-- `500` — Failed to create blob (DB error)
+Errors return `{"detail": "message"}` with `404`, `422`, or `500`.
 
 ## Run
 
@@ -48,6 +42,4 @@ docker run -p 8000:8000 aesend
 
 ## Stack
 
-- Python + FastAPI
-- SQLite
-- No ORM, no auth, no encryption server-side — by design
+Python, FastAPI, SQLite.
