@@ -21,7 +21,6 @@ All endpoints under `/blobs`. Data is base64-encoded bytes.
 |--------|----------|------|----------|--------|
 | `POST` | `/blobs` | `{"data": "<base64>"}` | `{"blob_id": "...", "data": "<base64>"}` | `201` |
 | `GET` | `/blobs/{blob_id}` | — | `{"data": "<base64>"}` | `200` |
-| `GET` | `/blobs` | — | `{"blobs": ["id1", "id2", ...]}` | `200` |
 | `DELETE` | `/blobs/{blob_id}` | — | — | `204` |
 
 Errors return `{"detail": "message"}` with `404`, `422`, or `500`.

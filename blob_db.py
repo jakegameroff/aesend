@@ -1,7 +1,7 @@
 import secrets
 import sqlite3
 
-DB = "blobs.db"
+DB = "/data/blobs.db"
 
 
 def make_blob_id() -> str:
