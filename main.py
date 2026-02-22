@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from blob_db import init_db
 from routes.blobs import router as blobs_router
+from routes.messages import router as messages_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -21,3 +22,4 @@ app.add_middleware(
 )
 
 app.include_router(blobs_router)
+app.include_router(messages_router)

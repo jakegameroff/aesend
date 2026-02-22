@@ -23,5 +23,14 @@ def init_db():
             created_at TEXT DEFAULT (datetime('now'))
         )
     """)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS encrypted_messages (
+            message_id TEXT PRIMARY KEY NOT NULL,
+            data TEXT NOT NULL,
+            wrapped_key TEXT NOT NULL,
+            iv TEXT NOT NULL,
+            created_at TEXT DEFAULT (datetime('now'))
+        )
+    """)
     conn.commit()
     conn.close()
