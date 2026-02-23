@@ -1,29 +1,32 @@
 # AESend
 
-Zero-knowledge encrypted sharing. The server never sees what you send.
-
-Data is encrypted client-side with AES-256-GCM before it leaves the browser. The backend stores opaque ciphertext and nothing else. The key lives in the URL fragment, which browsers [never send to the server](https://www.rfc-editor.org/rfc/rfc3986#section-3.5).
+End-to-end encrypted messaging. The server manages mailboxes and stores opaque ciphertext — it never sees plaintext or decryption keys.
 
 ## How it works
 
-1. Enter a message on the frontend
-2. Browser encrypts it with AES-256-GCM — plaintext never leaves your device
-3. Ciphertext is sent to the backend, which stores the blob and returns a unique ID
-4. Share the link. Recipient opens it, decrypts in their browser
+1. A user registers a username and uploads their RSA public key to create a mailbox
+2. A sender's browser fetches the recipient's public key, generates a random AES-256 key, encrypts the message with AES-GCM, wraps the AES key with the recipient's RSA public key, and sends everything to the server
+3. The recipient fetches their messages and decrypts in-browser with their private key, which never leaves their device
 
-The server is intentionally blind. Even if the database leaked, the contents are meaningless without the key.
+RSA-OAEP 4096-bit + AES-256-GCM hybrid encryption, Web Crypto API.
 
 ## API
 
-All endpoints under `/blobs`. Data is base64-encoded bytes.
+### Mailboxes
 
 | Method | Endpoint | Body | Response | Status |
 |--------|----------|------|----------|--------|
-| `POST` | `/blobs` | `{"data": "<base64>"}` | `{"blob_id": "...", "data": "<base64>"}` | `201` |
-| `GET` | `/blobs/{blob_id}` | — | `{"data": "<base64>"}` | `200` |
-| `DELETE` | `/blobs/{blob_id}` | — | — | `204` |
+| `POST` | `/mailboxes` | `{"username": "...", "public_key": "..."}` | `{"username": "..."}` | `201` |
+| `GET` | `/mailboxes/{username}` | — | `{"public_key": "..."}` | `200` |
 
-Errors return `{"detail": "message"}` with `404`, `422`, or `500`.
+### Messages
+
+| Method | Endpoint | Body | Response | Status |
+|--------|----------|------|----------|--------|
+| `POST` | `/messages` | `{"data": "...", "wrapped_key": "...", "iv": "...", "username": "..."}` | `{"message_id": "..."}` | `201` |
+| `GET` | `/messages/{username}` | — | `[{"message_id", "username", "data", "wrapped_key", "iv", "created_at"}, ...]` | `200` |
+
+Errors return `{"detail": "message"}` with `400`, `404`, `409`, or `500`.
 
 ## Run
 
