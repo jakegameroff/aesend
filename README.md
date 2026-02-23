@@ -16,6 +16,7 @@ RSA-OAEP 4096-bit + AES-256-GCM hybrid encryption, Web Crypto API.
 
 | Method | Endpoint | Body | Response | Status |
 |--------|----------|------|----------|--------|
+| `GET` | `/mailboxes` | — | `[{"username": "...", "created_at": "..."}]` | `200` |
 | `POST` | `/mailboxes` | `{"username": "...", "public_key": "..."}` | `{"username": "..."}` | `201` |
 | `GET` | `/mailboxes/{username}` | — | `{"public_key": "..."}` | `200` |
 

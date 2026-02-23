@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 blobs.db
 .env
+fly.toml
+.dockerignore
+.github/workflows/fly-deploy.yml
