@@ -1,5 +1,7 @@
 # AESend
 
+Try it out [here](https://jakegam.com/cool-things-aesend).
+
 End-to-end encrypted messaging. The server manages mailboxes and stores opaque ciphertext — it never sees plaintext or decryption keys.
 
 ## How it works
