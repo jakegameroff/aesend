@@ -30,11 +30,29 @@ def create_message(msg: MessageIn):
         raise HTTPException(status_code=500, detail="Failed to store message")
 
 @router.get("/{username}")
-def list_messages(username: str):
+def get_message_by_username(username: str):
     db = get_db()
     rows = db.execute(
         "SELECT message_id, mailbox_id, data, wrapped_key, iv, created_at FROM encrypted_messages WHERE mailbox_id = ? ORDER BY created_at DESC",
         (username,),
+    ).fetchall()
+    return [
+        Message(
+            message_id=r["message_id"],
+            username=r["mailbox_id"],
+            data=r["data"],
+            wrapped_key=r["wrapped_key"],
+            iv=r["iv"],
+            created_at=r["created_at"],
+        )
+        for r in rows
+    ]
+
+@router.get("")
+def list_messages():
+    db = get_db()
+    rows = db.execute(
+        "SELECT message_id, mailbox_id, data, wrapped_key, iv, created_at FROM encrypted_messages ORDER BY created_at DESC"
     ).fetchall()
     return [
         Message(
