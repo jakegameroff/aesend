@@ -16,9 +16,9 @@ class MailboxIn(BaseModel):
 def list_mailboxes():
     db = get_db()
     rows = db.execute(
-        "SELECT mailbox_id, created_at FROM mailboxes ORDER BY created_at DESC"
+        "SELECT mailbox_id, public_key, created_at FROM mailboxes ORDER BY created_at DESC"
     ).fetchall()
-    return [{"username": r["mailbox_id"], "created_at": r["created_at"]} for r in rows]
+    return [{"username": r["mailbox_id"], "public_key": r["public_key"], "created_at": r["created_at"]} for r in rows]
 
 @router.post("", status_code=201)
 def create_mailbox(body: MailboxIn):
